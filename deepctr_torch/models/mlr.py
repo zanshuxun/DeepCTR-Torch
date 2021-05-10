@@ -2,7 +2,7 @@
 """
 Author:
     Wutong Zhang
-    Weichen Shen,wcshen1994@163.com
+    Weichen Shen,weichenswc@163.com
 Reference:
     [1] Gai K, Zhu X, Li H, et al. Learning Piece-wise Linear Models from Large Scale Data for Ad Click Prediction[J]. arXiv preprint arXiv:1704.05194, 2017.(https://arxiv.org/abs/1704.05194)
 """
@@ -26,14 +26,15 @@ class MLR(BaseModel):
     :param task: str, ``"binary"`` for  binary logloss or  ``"regression"`` for regression loss
     :param bias_feature_columns: An iterable containing all the features used by bias part of the model.
     :param device: str, ``"cpu"`` or ``"cuda:0"``
+    :param gpus: list of int or torch.device for multiple gpus. If None, run on `device`. `gpus[0]` should be the same gpu with `device`.
     :return: A PyTorch model instance.
-    
+
     """
 
     def __init__(self, region_feature_columns, base_feature_columns=None, bias_feature_columns=None,
-                 region_num=4, l2_reg_linear=1e-5, init_std=0.0001, seed=1024, task='binary', device='cpu'
+                 region_num=4, l2_reg_linear=1e-5, init_std=0.0001, seed=1024, task='binary', device='cpu', gpus=None
                  ):
-        super(MLR, self).__init__(region_feature_columns, region_feature_columns, task=task, device=device)
+        super(MLR, self).__init__(region_feature_columns, region_feature_columns, task=task, device=device, gpus=gpus)
 
         if region_num <= 1:
             raise ValueError("region_num must > 1")
