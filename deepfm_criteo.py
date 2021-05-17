@@ -54,12 +54,9 @@ if __name__ == "__main__":
         linear_feature_columns + dnn_feature_columns)
 
     # 3.generate input data for model
-
-    # train, test = train_test_split(data, test_size=0.2,random_state=2020)
-    train = data
-    # train, test = train_test_split(data, test_size=0.2)
+    train, test = data[:10000000], data[10000000:]
     train_model_input = {name: train[name] for name in feature_names}
-    # test_model_input = {name: test[name] for name in feature_names}
+    test_model_input = {name: test[name] for name in feature_names}
 
     # 4.Define Model,train,predict and evaluate
 
@@ -78,5 +75,11 @@ if __name__ == "__main__":
                   # metrics=["binary_crossentropy", ], )
                   metrics=["binary_crossentropy", "auc"], )
 
-    model.fit(train_model_input, train[target].values,
-              batch_size=batch_size, epochs=epochs, verbose=1, validation_split=0.2)
+    for epoch in range(epochs):
+        print('epoch',epoch)
+        model.fit(train_model_input, train[target].values,
+                  batch_size=batch_size, epochs=1, verbose=1)
+
+        pred_ans = model.predict(test_model_input, batch_size*20)
+        print("test LogLoss", round(log_loss(test[target].values, pred_ans), 4))
+        print("test AUC", round(roc_auc_score(test[target].values, pred_ans), 4))
