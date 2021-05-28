@@ -12,7 +12,7 @@ from deepctr_torch.models import *
 
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 if __name__ == "__main__":
     epochs = 5
@@ -70,6 +70,7 @@ if __name__ == "__main__":
 
     model = AFN(linear_feature_columns=linear_feature_columns, dnn_feature_columns=dnn_feature_columns,
                 task='binary', afn_dnn_hidden_units=(256, 128),
+                # task='binary', afn_dnn_hidden_units=(400, 400, 400),
                 l2_reg_embedding=1e-5, device=device)
     print('model', model)
 
