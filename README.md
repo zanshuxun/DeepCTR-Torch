@@ -4,14 +4,14 @@
 
 1. download and extract the [avazu dataset](https://www.kaggle.com/c/avazu-ctr-prediction/data), then put `train.csv` into `experiment/`
 
-2. select data in the first 3 days:
+2. select data in the first 3 days
 
 ```
 cd experiment/
 python 0_avazu_data_proc.py
 ```
 
-3. run the models:
+3. run the models
 
 `python 5avazu_test_l2_0.py`
 
@@ -29,3 +29,12 @@ python 0_avazu_data_proc.py
 
    `head -n 12000000 train.txt > criteo_12m.txt`
 
+4. run the model
+
+   `python deepfm_criteo.py`
+
+   `python afn_criteo.py`
+
+   
+
+   
