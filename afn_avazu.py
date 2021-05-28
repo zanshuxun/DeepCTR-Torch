@@ -12,7 +12,7 @@ from deepctr_torch.models import *
 
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 
 if __name__ == "__main__":
     epochs = 5
