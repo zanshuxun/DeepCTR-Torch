@@ -11,11 +11,12 @@ from deepctr_torch.inputs import SparseFeat, DenseFeat, get_feature_names
 from deepctr_torch.models import *
 
 import os
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 if __name__ == "__main__":
-    epochs=2
-    batch_size=512
+    epochs = 5
+    batch_size = 512
 
     # data = pd.read_csv('/HDD_sdb/wyw/zsx/avazu/avazu_first_3d.csv')
     # data = pd.read_csv('/HDD_sdb/wyw/zsx/avazu/avazu_first_3d.csv',nrows=50)
@@ -25,16 +26,16 @@ if __name__ == "__main__":
                        'device_model', 'device_type', 'device_conn_type',  # 'device_ip', 
                        'C14',
                        'C15', 'C16', 'C17', 'C18', 'C19', 'C20', 'C21', ]
-    print('len(sparse_features)',len(sparse_features))  # 去掉id click device_ip   不用day  25-4=21
+    print('len(sparse_features)', len(sparse_features))  # 去掉id click device_ip   不用day  25-4=21
 
     # data[sparse_features] = data[sparse_features].fillna('-1', )
     target = ['click']
 
     try:
         # read data from pkl directly
-        data=pd.read_pickle('data_avazu_first_3d.pkl')
+        data = pd.read_pickle('data_avazu_first_3d.pkl')
         print('read_pickle ok')
-    except:    
+    except:
         print('preprocess data and save it by pickle')
         data = pd.read_csv('avazu_first_3d.csv')
         # data = pd.read_csv('avazu_first_3d.csv',nrows=50)  # for test
@@ -46,7 +47,7 @@ if __name__ == "__main__":
 
         data.to_pickle('data_avazu_first_3d.pkl')
         print('to_pickle ok')
-    
+
     print(data[:5])
     print(data['day'].unique())
 
@@ -64,10 +65,10 @@ if __name__ == "__main__":
     # 3.generate input data for model
 
     # train, test = train_test_split(data, test_size=0.2,random_state=2020)
-    train=data[data['day']<23]
-    test=data[data['day']==23]
-    print('train.shape',train.shape)
-    print('test.shape',test.shape)
+    train = data[data['day'] < 23]
+    test = data[data['day'] == 23]
+    print('train.shape', train.shape)
+    print('test.shape', test.shape)
 
     train_model_input = {name: train[name] for name in feature_names}
     test_model_input = {name: test[name] for name in feature_names}
@@ -81,23 +82,23 @@ if __name__ == "__main__":
         device = 'cuda:0'
 
     model = AFN(linear_feature_columns=linear_feature_columns, dnn_feature_columns=dnn_feature_columns,
-                   task='binary',
-                   l2_reg_embedding=1e-5, device=device)
-    print('model',model)
+                task='binary',
+                l2_reg_embedding=1e-5, device=device)
+    print('model', model)
 
     model.compile("adam", "binary_crossentropy",
                   # metrics=["binary_crossentropy", ], )
                   metrics=["binary_crossentropy", "auc"], )
 
-    pred_ans = model.predict(test_model_input, batch_size*20)
+    pred_ans = model.predict(test_model_input, batch_size * 20)
     print("test LogLoss", round(log_loss(test[target].values, pred_ans), 4))
     print("test AUC", round(roc_auc_score(test[target].values, pred_ans), 4))
 
     for epoch in range(epochs):
-        print('epoch',epoch)
+        print('epoch', epoch)
         model.fit(train_model_input, train[target].values,
                   batch_size=batch_size, epochs=1, verbose=1)
 
-        pred_ans = model.predict(test_model_input, batch_size*20)
+        pred_ans = model.predict(test_model_input, batch_size * 20)
         print("test LogLoss", round(log_loss(test[target].values, pred_ans), 4))
         print("test AUC", round(roc_auc_score(test[target].values, pred_ans), 4))
